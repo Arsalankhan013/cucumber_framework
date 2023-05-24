@@ -1,0 +1,106 @@
+package APIsteps;
+
+
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+import org.apache.groovy.util.Maps;
+import org.junit.Assert;
+import utils.APIConstants;
+import utils.APIPayload;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.equalTo;
+
+public class APISteps {
+
+    RequestSpecification request;
+    Response response;
+
+    public static String employee_id;
+    @Given("a request is prepared for creating an employee")
+    public void a_request_is_prepared_for_creating_an_employee() {
+         request=given().header(APIConstants.HEADER_CONTENT_TYPE,APIConstants.CONTENT_TYPE_VALUE).header(APIConstants.HEADER_AUTHORIZATION,GenerateToken.token).body(
+                APIPayload.createEmployeePayloadAPI("checking","api","M","M","1994-09-09","N?A","QA")
+        );
+    }
+    @When("a POST call is made to create an employee")
+    public void a_post_call_is_made_to_create_an_employee() {
+     response=request.when().post(APIConstants.CREATE_EMPLOYEE_URI);
+     response.prettyPrint();
+    }
+    @Then("the status code for creating an employee is {int}")
+    public void the_status_code_for_creating_an_employee_is(Integer stcode) {
+        response.then().assertThat().statusCode(stcode);
+    }
+    @Then("the response body contains key {string} and value {string}")
+    public void the_response_body_contains_key_and_value(String key, String value) {
+      response.then().assertThat().body(key, equalTo(value));
+    }
+    @Then("the employee id {string} is stored as global to be used for other request")
+    public void the_employee_id_is_stored_as_global_to_be_used_for_other_request(String empid) {
+       // response.prettyPrint();
+        employee_id=response.jsonPath().getString(empid);
+
+       // System.out.println(employee_id);
+    }
+
+
+    @Given("a request is prepared for getting a created employee")
+    public void a_request_is_prepared_for_getting_a_created_employee() {
+        request=given().header(APIConstants.HEADER_CONTENT_TYPE,APIConstants.CONTENT_TYPE_VALUE).header(APIConstants.HEADER_AUTHORIZATION,GenerateToken.token).
+                queryParam("employee_id",employee_id);
+        ;
+    }
+    @When("a GET call is made to get this employee")
+    public void a_get_call_is_made_to_get_this_employee() {
+     response= request.when().get(APIConstants.GET_ONE_EMPLOYEE_URI);
+    }
+    @Then("the status code for this emp is {int}")
+    public void the_status_code_for_this_emp_is(Integer int1) {
+        response.then().assertThat().statusCode(int1);
+    }
+    @Then("the employee id {string} should match with global emp id")
+    public void the_employee_id_should_match_with_global_emp_id(String string) {
+     String idtemp= response.jsonPath().getString(string);
+        Assert.assertEquals(idtemp,employee_id);
+    }
+    @Then("the retrieved data at {string} object should match with the data used for creating the employee")
+    public void the_retrieved_data_at_object_should_match_with_the_data_used_for_creating_the_employee(String empObject, DataTable dataTable) {
+
+        List<Map<String,String>> expectedData =dataTable.asMaps();
+
+       Map<String,String> actualData= response.body().jsonPath().get("employee");
+
+       for(Map<String,String> map:expectedData){
+
+          Set<String> keysExpected= map.keySet();
+
+          for(String key:keysExpected){
+
+              String Expectedvalue=map.get(key);
+              System.out.println(Expectedvalue);
+             String actualvalue= actualData.get(key);
+              System.out.println(actualvalue);
+             Assert.assertEquals(expectedData,actualData);
+          }
+       }
+    }
+
+    @Given("a request is prepared for creating an employee with dynamic data {string} , {string}  , {string} , {string} , {string} , {string} , {string}")
+    public void a_request_is_prepared_for_creating_an_employee_with_dynamic_data(String string, String string2, String string3, String string4, String string5, String string6, String string7) {
+        request=given().header(APIConstants.HEADER_CONTENT_TYPE,APIConstants.CONTENT_TYPE_VALUE).header(APIConstants.HEADER_AUTHORIZATION,GenerateToken.token).
+                body(APIPayload.createEmployeePayloadAPI(string,string2,string3,string4,string5,string6,string7));
+
+    }
+
+
+
+}
