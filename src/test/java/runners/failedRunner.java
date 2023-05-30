@@ -1,24 +1,21 @@
 package runners;
 
+
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = "src/test/resources/features/ApiWorkflow.feature",
+        features = "@target/failed.txt",
 
-        glue = "APIsteps",
-
-
-        dryRun=false,
-       //tags="@apibasic1",
+glue="APIsteps",
         monochrome=true,
 
-        plugin = {"pretty", "html:target/cucumber.html", "json:target/cucumber.json",
+        plugin = {"pretty", "html:target2/cucumber.html", "json:target2/cucumber.json",
                 //this failed.txt file holds all the scenarios which are failed  during execution
                 "rerun:target/failed.txt"}
 )
 
-public class APIRunner {
+public class failedRunner {
 }

@@ -8,6 +8,7 @@ import io.cucumber.java.en.When;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.apache.groovy.util.Maps;
+import org.apiguardian.api.API;
 import org.junit.Assert;
 import utils.APIConstants;
 import utils.APIPayload;
@@ -27,9 +28,10 @@ public class APISteps {
     public static String employee_id;
     @Given("a request is prepared for creating an employee")
     public void a_request_is_prepared_for_creating_an_employee() {
-         request=given().header(APIConstants.HEADER_CONTENT_TYPE,APIConstants.CONTENT_TYPE_VALUE).header(APIConstants.HEADER_AUTHORIZATION,GenerateToken.token).body(
-                APIPayload.createEmployeePayloadAPI("checking","api","M","M","1994-09-09","N?A","QA")
-        );
+       request=given().
+               header(APIConstants.HEADER_CONTENT_TYPE,APIConstants.CONTENT_TYPE_VALUE).
+               header(APIConstants.HEADER_AUTHORIZATION,GenTOken.tokenn).
+               body(APIPayload.createEmployeeJsonBody());
     }
     @When("a POST call is made to create an employee")
     public void a_post_call_is_made_to_create_an_employee() {
@@ -55,7 +57,7 @@ public class APISteps {
 
     @Given("a request is prepared for getting a created employee")
     public void a_request_is_prepared_for_getting_a_created_employee() {
-        request=given().header(APIConstants.HEADER_CONTENT_TYPE,APIConstants.CONTENT_TYPE_VALUE).header(APIConstants.HEADER_AUTHORIZATION,GenerateToken.token).
+        request=given().header(APIConstants.HEADER_CONTENT_TYPE,APIConstants.CONTENT_TYPE_VALUE).header(APIConstants.HEADER_AUTHORIZATION,GenTOken.tokenn).
                 queryParam("employee_id",employee_id);
         ;
     }
@@ -96,7 +98,7 @@ public class APISteps {
 
     @Given("a request is prepared for creating an employee with dynamic data {string} , {string}  , {string} , {string} , {string} , {string} , {string}")
     public void a_request_is_prepared_for_creating_an_employee_with_dynamic_data(String string, String string2, String string3, String string4, String string5, String string6, String string7) {
-        request=given().header(APIConstants.HEADER_CONTENT_TYPE,APIConstants.CONTENT_TYPE_VALUE).header(APIConstants.HEADER_AUTHORIZATION,GenerateToken.token).
+        request=given().header(APIConstants.HEADER_CONTENT_TYPE,APIConstants.CONTENT_TYPE_VALUE).header(APIConstants.HEADER_AUTHORIZATION,GenTOken.tokenn).
                 body(APIPayload.createEmployeePayloadAPI(string,string2,string3,string4,string5,string6,string7));
 
     }
